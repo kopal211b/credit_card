@@ -1,15 +1,13 @@
 import uvicorn
 from fastapi import FastAPI,HTTPException
 from pydantic import BaseModel
-import notebooks
 import joblib
 import pickle
 import pandas as pd
-from mangum import Mangum
 import numpy as np
 #create the app object
 app=FastAPI()
-model = joblib.load("notebooks\\model.pkl","rb")
+model = joblib.load("model.pkl","rb")
 # Define the input data model, including amount, time, and V1 to V28
 class TransactionInput(BaseModel):
     time: float
@@ -88,8 +86,8 @@ async def predict_fraud(input_data: TransactionInput):
     else:
         return {"result": "The transaction might be fraudulent."}
 
-risk_model = joblib.load('notebooks\\credit_risk.pkl')  # Logistic Regression risk_model
-scaler = joblib.load('notebooks\\scaler.pkl')           # StandardScaler
+risk_model = joblib.load('credit_risk.pkl')  # Logistic Regression risk_model
+scaler = joblib.load('scaler.pkl')           # StandardScaler
 
 # Define the input schema
 class CreditRiskInput(BaseModel):
@@ -131,5 +129,3 @@ def assess_credit_risk(input_data: CreditRiskInput):
         "risk_score": risk_score,
         "suggestions": suggestions
     }
-
-handler = Mangum(app)
